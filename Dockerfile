@@ -41,15 +41,18 @@ RUN useradd -m app
 # Run as the new user
 USER app
 
-# Copy application files over
-COPY --chown=app:app index.js /app/
-COPY --chown=app:app package*.json /app/
-COPY --chown=app:app lib /app/lib
-COPY --chown=app:app data/placeholder /app/data/placeholder
-COPY --chown=app:app migrations /app/migrations
-
+# Set the working directory to /app
 WORKDIR /app
 
+# Copy application files over
+COPY --chown=app:app package*.json ./
+
+# Install the project dependencies
 RUN npm ci --production
+
+COPY --chown=app:app index.js ./
+COPY --chown=app:app lib ./lib
+COPY --chown=app:app data/placeholder ./data/placeholder
+COPY --chown=app:app migrations ./migrations
 
 CMD ["/usr/bin/npm", "start"]
